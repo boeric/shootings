@@ -4,7 +4,7 @@
 <meta charset=utf-8 />
 <title>Mass Shootings</title>
 <!-- Author: Bo Ericsson, bo@boe.net -->
-<!-- References: Crossfilter API (https://github.com/square/crossfilter/wiki/API-Reference) and example (http://square.github.io/crossfilter/), and MapBox API (https://mapbox.com) -->
+<!-- Based on crossfilter example (http://square.github.io/crossfilter/) and API (https://github.com/square/crossfilter/wiki/API-Reference), and MapBox examples and API (https://mapbox.com) -->
 <!--<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />-->
 <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
 <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
@@ -244,6 +244,7 @@ function scaledPoint(feature, latlng) {
   html +=    "Dead: " + feature.properties.Dead + "<br>";
   html +=    "Injured: " + feature.properties.Injured + "<br>";
   html +=    "References: <br>";
+
   // generate an anchor element for each reference
   feature.properties.References.forEach(function(d, i) {
     // http://stackoverflow.com/questions/8498592/extract-root-domain-name-from-string
@@ -256,9 +257,9 @@ function scaledPoint(feature, latlng) {
   return L.circleMarker(latlng, {
     radius: pointRadius(feature),
     fillColor: pointColor(feature),
-    fillOpacity: .6, //0.5,
+    fillOpacity: 0.6,
     weight: 0.5,
-    color: "darkred" //'#fff'
+    color: "darkred"
   }).bindPopup(html);
 }
 
@@ -276,7 +277,6 @@ chartDiv.select(".title")
 
 // get the data
 d3.json("shootings.GeoJSON", function(error, data) {
-  //console.log("data", data);
   var featureCount = data.features.length;
 
   // process the data
@@ -340,7 +340,7 @@ d3.json("shootings.GeoJSON", function(error, data) {
         .brushDirty(true)
         .group(group);
 
-      // refresh
+      // refresh viz
       renderAll();
     })
 
@@ -372,9 +372,10 @@ d3.json("shootings.GeoJSON", function(error, data) {
   // called at init, by the brush event handlers and by filter reset "a" elem
   function renderAll() {
 
-    // run the chart function
+    // run the chart function (these three are equivalent functionally)
     //d3.select(".chart").call(chart);
     chartDiv.call(chart);
+    // chart(chartDiv)
 
     // get the filtered data
     var selected = week.top(Infinity);
@@ -392,39 +393,29 @@ d3.json("shootings.GeoJSON", function(error, data) {
       .addData(geoJson);
 
     // update info window
-    var totalEvents = selected.length;
-    var groups = countTracker.all();
-    var weeks = groups.reduce(function(p, v, i) { return groups[i].value > 0 ? p + 1 : p + 0 }, 0)
-    var deadInjuredCount = selected.reduce(function(p, c, i) { 
-      return { dead: selected[i].properties.Dead + p.dead, injured: selected[i].properties.Injured + p.injured }
-    }, { dead: 0, injured: 0 })
-    var avgDead = deadInjuredCount.dead / weeks;
-    var avgInjured = deadInjuredCount.injured / weeks;
-    //console.log("---", deadInjuredCount)
+    var totalEvents = selected.length,
+        groups = countTracker.all(),
+        weeks = groups.reduce(function(p, v, i) { return groups[i].value > 0 ? p + 1 : p + 0 }, 0),
+        deadInjuredCount = selected.reduce(function(p, c, i) { 
+          return { dead: selected[i].properties.Dead + p.dead, injured: selected[i].properties.Injured + p.injured }
+        }, { dead: 0, injured: 0 }),
+        avgDead = deadInjuredCount.dead / weeks,
+        avgInjured = deadInjuredCount.injured / weeks;
 
-    // create html
+    // create html for info window
     var html = "";
-    /*
-    html    += "Number of weeks: " + weeks + "<br>";
-    html    += "Total Shootings: " + fmtM(totalEvents) + "<br>";
-    html    += "Total Dead: " + fmtM(deadInjuredCount.dead) + "<br>";
-    html    += "Total Injured: " + fmtM(deadInjuredCount.injured) + "<br>";
-    if (weeks != 1) {
-      html    += "Dead per Week: " + fmt1dec(avgDead) + "<br>";
-      html    += "Injured per Week: " + fmt1dec(avgInjured) + "<br>";     
-    }
-    */
     html    += "<table>";
     html    += "  <tr><td>Number of Weeks</td><td class='data'>" + weeks + "</td></tr>";
     html    += "  <tr><td>Total Shootings</td><td class='data'>" + fmtM(totalEvents) + "</td></tr>";
     html    += "  <tr class='dead'><td>Total Dead</td><td class='data'>" + fmtM(deadInjuredCount.dead) + "</td></tr>";
     html    += "  <tr class='injured'><td>Total Injured</td><td class='data'>" + fmtM(deadInjuredCount.injured) + "</td></tr>";
     if (weeks != 1) {
-      html    += "  <tr class='dead'><td>Dead per Week</td><td class='data'>" + fmt1dec(avgDead) + "</td></tr>";
-      html    += "  <tr class='injured'><td>Injured per Week</td><td class='data'>" + fmt1dec(avgInjured) + "</td></tr>";
+      html  += "  <tr class='dead'><td>Dead per Week</td><td class='data'>" + fmt1dec(avgDead) + "</td></tr>";
+      html  += "  <tr class='injured'><td>Injured per Week</td><td class='data'>" + fmt1dec(avgInjured) + "</td></tr>";
     }
     html    += "</table>"
 
+    // set the html
     d3.select(".infoDiv").html(html)
   }
 
@@ -440,7 +431,7 @@ d3.json("shootings.GeoJSON", function(error, data) {
 
   // setup the bar chart (used to filter weeks)
   function barChart() {
-    // barChart.id is shared by all instances of barChart's chart, effectively an instance counter
+    //TODO: remove this instance counter (in this viz, there is only one instance)
     if (!barChart.id) barChart.id = 0;
 
     var margin = {top: 10, right: 10, bottom: 20, left: 50},
@@ -473,7 +464,7 @@ d3.json("shootings.GeoJSON", function(error, data) {
         var div = theDiv = d3.select(this);
         var g = div.select("g");
 
-        // if g is empty, reubild the svg etc.
+        // if g is empty, reubild the svg
         if (g.empty()) {
 
           // create svg and group
@@ -483,7 +474,7 @@ d3.json("shootings.GeoJSON", function(error, data) {
             .append("g")
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
               .on("click", function() {
-                //console.log("-----------------------------")
+                // exit the animator
                 if (anim) anim.exit();
               })
 
@@ -513,7 +504,7 @@ d3.json("shootings.GeoJSON", function(error, data) {
             gBrush.selectAll(".resize").append("path").attr("d", resizePath);           
           }
 
-          // add the x-axis
+          // add the x-axis last (so it's drawn on top of brush)
           g.append("g")
               .attr("class", "axis")
               .attr("transform", "translate(0," + height + ")")
@@ -576,10 +567,9 @@ d3.json("shootings.GeoJSON", function(error, data) {
 
     // brush handlers
     brush.on("brushstart.chart", function() {
-      //console.log("brushstart.chart div", d3.select(this.parentNode.parentNode.parentNode));
       // get the containing div
       var div = d3.select(this.parentNode.parentNode.parentNode);
-      // remove the display property from the reset "a" elem
+      // remove the display property from the reset anchor elem
       div.select(".title a").style("display", null);
     });
 
@@ -608,8 +598,9 @@ d3.json("shootings.GeoJSON", function(error, data) {
       }
     });
 
+    // function to sync UI and crossfilter to an empty brush
     function emptyBrush() {
-      console.log("emptyBrush", this);
+      //console.log("emptyBrush", this);
 
       if (!brush.empty()) {
         console.error("brush not empty")
@@ -619,18 +610,19 @@ d3.json("shootings.GeoJSON", function(error, data) {
       // get reference to containing div
       var div = d3.select(this.parentNode.parentNode.parentNode);
 
-      // hide the reset "a" element
+      // hide the reset anchor element
       div.select(".title a").style("display", "none");
 
       // remove the clip rectangle
       div.select("#clip-" + id + " rect")
-        .attr("x", null) // remove the x attribute which will render the clipRect invalid????????????
+        .attr("x", null) // remove the x attribute which will render the clipRect invalid
         .attr("width", "100%");
       
       // reset the filter
       dimension.filterAll();
     }
 
+    // chart configuration functions
     chart.margin = function(_) {
       if (!arguments.length) return margin;
       margin = _;
@@ -818,7 +810,6 @@ function animator() {
 
     function reset() {
       this.blur();
-      //console.log("reset...", this)
       main.reset();
     }
 
@@ -878,21 +869,18 @@ function animator() {
     chart.brushExtent(dateExtent)
   }
 
-  // actions
+  // action functions
   main.reset = function() {
     speed = 1000;
     currPos = 0;
     oneCycle();
     //animating = false;
-    //console.log("resetting")
   }
   main.resume = function() {
     animating = true;
-    //console.log("setting animating to ", animating)
   }
   main.stop = function() {
     animating = false;
-    //console.log("setting animating to ", animating)
   }
   main.exit = function() {
     animating = false;
@@ -902,22 +890,18 @@ function animator() {
     d3.selectAll(".anim").style("display", "none")
     // ensure the halt/resume button says halt
     d3.select(".anim2").text("Halt").attr("value", "halt")
-    //console.log("stopping animation...")
   }
   main.slower = function() {
     speed = Math.min(4000, speed * 2);
-    //console.log("setting speed to ", speed)
   }
   main.faster = function() {
     speed = Math.max(250, speed / 2);
-    //console.log("setting speed to ", speed)
   }
   main.forward = function() {
     if (ready && !animating) {
       currPos++;
       if (currPos == data.length) currPos = 0;
       oneCycle();
-      //console.log("setting pos to ", currPos);
     }
     else console.log("not ready");
   }
@@ -926,12 +910,11 @@ function animator() {
       currPos--;
       if (currPos < 0) currPos = data.length - 1;
       oneCycle();
-      //console.log("setting pos to ", currPos);
     }
     else console.log("not ready");
   }
 
-  // configurations
+  // configuration functions
   main.speed = function(_) {
     if (!arguments.length) return speed;
     speed = _;
@@ -949,6 +932,7 @@ function animator() {
   }
 
   return main;
-}
+  
+} // end animator
 
 </script>
