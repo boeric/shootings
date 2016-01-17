@@ -214,7 +214,7 @@ var fmt = d3.format("02d"),
 var frameEl = window.frameElement;
 if (frameEl != null) {
   console.log("iframe height is: [" + frameEl.height + "]")
-  if (frameEl.height < 700) frameEl.height = 700;
+  frameEl.height = "700px";
 } 
 
 // build the map
