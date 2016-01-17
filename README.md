@@ -15,7 +15,7 @@ Notes:
 11. The animation can be stopped or resumed, single-stepped forwards or backwards, and the animation speed can be adjusted
 12. The animation cycles through each week and when reaching the end, will restart at the first week
 
-Technically, the visualization is using **D3.js**, **Crossfilter.js** and **Mapbox's API**. The map source is Mapbox and Open Streetmaps.
+Technically, the visualization is using **D3.js**, **Crossfilter.js** and **Mapbox's API**, and is partially based on a great crossfilter example [here](http://square.github.io/crossfilter/) and a variety of Mapbox examples [here](https://www.mapbox.com/mapbox.js/example/v1.0.0/). The map source is Mapbox and Open Streetmaps.
 
 Open Issues:
 
