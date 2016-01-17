@@ -24,4 +24,6 @@ Open Issues:
 3. The events have been geo located using the Google geocoder. Due to issues in the raw data (where not all events have clean City/State identifiers), some events have been incorrectly located
 4. When the animation is running, clicking in the bar chart will terminate the animator (as designed). However, click-dragging (which will reengage the brush) will currently not terminate the animator. The fix is to kill the animator upon click-dragging in the svg, in addition to simple clicks
 
-See the visualization in action [here](http://bl.ocks.org/boeric/c1fe5650da3d6e790706). 
+See the visualization in action [here](http://bl.ocks.org/boeric/c1fe5650da3d6e790706)
+See the project at Github Gist [here](https://gist.github.com/boeric/c1fe5650da3d6e790706)
+See the project at Github [here](https://github.com/boeric/shootings)
