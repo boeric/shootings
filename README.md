@@ -1,5 +1,3 @@
-#Mass Shootings in the US
-
 The visualization is using data from [www.shootingtracker.com](www.shootingtracker.com) and covers the period January 2013 through early December 2015. The event data (comprised of over 1000 shooting events) has been grouped into weeks. 
 
 Notes:
