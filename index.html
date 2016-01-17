@@ -210,12 +210,24 @@ var fmt = d3.format("02d"),
     fmt1dec = d3.format(".1f"),
     fmtM = d3.format(",d");
 
+/*
 // ensure at least 700px height if running in an iframe (bl.ocks)
 var frameEl = window.frameElement;
 if (frameEl != null) {
   console.log("iframe height is: [" + frameEl.height + "]")
   frameEl.height = "700px";
 } 
+console.log("this", this, "self", self)
+
+var height = 700;
+d3.select(self.frameElement).style("height", height + "px");
+*/
+var duration = 1000;
+var height = 900;
+d3.select(self.frameElement).transition()
+    .duration(duration)
+    .style("height", height + "px");
+
 
 // build the map
 var mapId = "boeric.omod7h1p"; // dark map
@@ -381,7 +393,7 @@ d3.json("shootings.GeoJSON", function(error, data) {
     var selected = week.top(Infinity);
     //console.log("selected", selected)
 
-    // create geo json structure (needed for mapbox api)
+    // create geojson structure (needed for mapbox api)
     var geoJson = {
       type: "FeatureCollection",
       features: selected
@@ -476,6 +488,7 @@ d3.json("shootings.GeoJSON", function(error, data) {
               .on("click", function() {
                 // exit the animator
                 if (anim) anim.exit();
+                //TODO: need to handle the case of mouse drag as well...
               })
 
           // reset the clip path to full width
@@ -932,7 +945,7 @@ function animator() {
   }
 
   return main;
-  
+
 } // end animator
 
 </script>
