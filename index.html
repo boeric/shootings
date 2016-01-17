@@ -210,24 +210,9 @@ var fmt = d3.format("02d"),
     fmt1dec = d3.format(".1f"),
     fmtM = d3.format(",d");
 
-/*
 // ensure at least 700px height if running in an iframe (bl.ocks)
-var frameEl = window.frameElement;
-if (frameEl != null) {
-  console.log("iframe height is: [" + frameEl.height + "]")
-  frameEl.height = "700px";
-} 
-console.log("this", this, "self", self)
-
-var height = 700;
-d3.select(self.frameElement).style("height", height + "px");
-*/
-var duration = 1000;
-var height = 900;
-d3.select(self.frameElement).transition()
-    .duration(duration)
-    .style("height", height + "px");
-
+// http://bl.ocks.org/mbostock/1093025
+d3.select(self.frameElement).transition().duration(500).style("height", "700px");
 
 // build the map
 var mapId = "boeric.omod7h1p"; // dark map
