@@ -213,7 +213,7 @@ var fmt = d3.format("02d"),
 // ensure at least 700px height if running in an iframe (bl.ocks)
 var frameEl = window.frameElement;
 if (frameEl != null) {
-  console.log("iframe height is ", frameEl.height)
+  console.log("iframe height is: [" + frameEl.height + "]")
   if (frameEl.height < 700) frameEl.height = 700;
 } 
 
